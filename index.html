@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device        .badge {
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-secon        .airport-card.active {
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-secondary) 100%);
+            border-color: var(--accent);
+            color: var(--bg-dark);
+            box-shadow: 0 8px 30px rgba(0, 180, 216, 0.4);
+        }
+
+        .airport-card.active .iata { color: var(--bg-dark); }
+        .airport-card.active .city { color: rgba(5, 10, 15, 0.8); }%);
+            color: var(--bg-dark);
+            padding: 0.5rem 1rem;
+            border-radius: 2rem;
+            font-weight: 600;
+            font-size: 0.9rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: 0 4px 15px rgba(0, 180, 216, 0.3);
+            animation: popIn 0.3s ease-out;
+        }al-scale=1.0">
+    <title>Next Trip Recommendations | Global Route Optimizer</title>
+    <style>
+        :root {
+            --bg: linear-gradient(135deg, #0a1628 0%, #1a3a52 100%);
+            --bg-dark: #050a0f;
+            --card-bg: #0f1f2e;
+            --card-bg-light: #1a2e3f;
+            --accent: #00b4d8;
+            --accent-secondary: #0096c7;
+            --success: #00b4d8;
+            --warning: #ff9f00;
+            --danger: #ff6b6b;
+            --border: #2a4563;
+            --text-main: #ffffff;
+            --text-dim: #a0b9d9;
+            --shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body { 
+            background: var(--bg-dark); 
+            color: var(--text-main); 
+            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            overflow-x: hidden;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--bg);
+            opacity: 0.05;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .container { 
+            max-width: 1200px; 
+            margin: 0 auto; 
+            padding: 2rem;
+        }
+
+        header { 
+            text-align: center; 
+            margin-bottom: 3rem;
+            animation: slideDown 0.8s ease-out;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h1 { 
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem; 
+            font-size: 3rem;
+            font-weight: 700;
+            letter-spacing: -1px;
+        }
+
+        p.desc { 
+            color: var(--text-dim); 
+            font-size: 1.1rem;
+            font-weight: 300;
+        }
+
+        .selection-panel {
+            background: rgba(26, 26, 46, 0.8);
+            border: 1px solid var(--border);
+            border-radius: 1.2rem;
+            padding: 2rem;
+            margin-bottom: 2.5rem;
+            backdrop-filter: blur(10px);
+            box-shadow: var(--shadow);
+        }
+
+        .selection-panel > div > strong {
+            display: block;
+            margin-bottom: 0.75rem;
+            color: var(--accent-secondary);
+            font-size: 0.95rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .selection-badges { 
+            display: flex; 
+            flex-wrap: wrap; 
+            gap: 0.7rem; 
+            margin-top: 1rem;
+            min-height: 2.5rem;
+            align-content: flex-start;
+        }
+
+        .badge {
+            background: linear-gradient(135deg, var(--accent) 0%, #00ffb4 100%);
+            color: var(--bg-dark);
+            padding: 0.5rem 1rem;
+            border-radius: 2rem;
+            font-weight: 600;
+            font-size: 0.9rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: 0 4px 15px rgba(0, 212, 255, 0.3);
+            animation: popIn 0.3s ease-out;
+        }
+
+        @keyframes popIn {
+            from { opacity: 0; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .search-container { 
+            position: relative; 
+            margin-bottom: 2rem;
+        }
+
+        .search-container::before {
+            content: '🔍';
+            position: absolute;
+            left: 1.2rem;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.2rem;
+            pointer-events: none;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 1.2rem 1.2rem 1.2rem 3.5rem;
+            border-radius: 0.9rem;
+            border: 2px solid var(--border);
+            background: var(--card-bg);
+            color: var(--text-main);
+            font-size: 1.1rem;
+            outline: none;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .search-input:focus { 
+            border-color: var(--accent);
+            box-shadow: 0 0 20px rgba(0, 180, 216, 0.3);
+        }
+
+        .search-input::placeholder {
+            color: var(--text-dim);
+        }
+
+        .airport-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 1rem;
+            max-height: 450px;
+            overflow-y: auto;
+            padding: 1.5rem;
+            background: var(--card-bg-light);
+            border-radius: 1.2rem;
+            border: 1px solid var(--border);
+            box-shadow: inset 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .airport-card {
+            background: var(--card-bg);
+            border: 2px solid var(--border);
+            padding: 1rem;
+            border-radius: 0.9rem;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            display: flex;
+            flex-direction: column;
+            gap: 0.3rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .airport-card:hover { 
+            transform: translateY(-6px); 
+            border-color: var(--accent);
+            box-shadow: 0 8px 25px rgba(0, 180, 216, 0.2);
+        }
+
+        .airport-card.active {
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-secondary) 100%);
+            border-color: var(--accent);
+            color: var(--bg-dark);
+            box-shadow: 0 8px 30px rgba(0, 212, 255, 0.4);
+        }
+
+        .airport-card.active .iata { color: var(--bg-dark); }
+        .airport-card.active .city { color: rgba(15, 15, 30, 0.8); }
+
+        .iata { 
+            font-weight: 700; 
+            font-size: 1.5rem; 
+            color: var(--accent);
+            letter-spacing: 1px;
+        }
+
+        .city { 
+            font-size: 0.75rem; 
+            text-transform: uppercase; 
+            color: var(--text-dim);
+            font-weight: 500;
+        }
+
+        .results-section {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .rec-card {
+            background: var(--card-bg);
+            padding: 2.5rem;
+            border-radius: 1.2rem;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow);
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .rec-card h2 {
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 1rem;
+            font-size: 1.8rem;
+        }
+
+        .rec-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border);
+            transition: all 0.3s;
+            border-radius: 0.6rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .rec-item:hover {
+            background: rgba(0, 180, 216, 0.05);
+            border-radius: 0.6rem;
+        }
+
+        .rec-item:last-child { 
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+
+        .rec-info { 
+            display: flex; 
+            align-items: center; 
+            gap: 1.5rem;
+            flex: 1;
+        }
+
+        .rec-rank { 
+            font-size: 1.8rem; 
+            font-weight: 700; 
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            min-width: 50px;
+        }
+
+        .rec-score { 
+            color: var(--success); 
+            font-family: 'Courier New', Courier, monospace; 
+            font-weight: 700; 
+            font-size: 1.3rem;
+        }
+
+        .tourism-tag {
+            background: rgba(0, 180, 216, 0.15);
+            border: 1px solid var(--accent);
+            color: var(--accent);
+            padding: 0.4rem 0.9rem;
+            border-radius: 2rem;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-block;
+            font-weight: 500;
+        }
+
+        .tourism-tag:hover { 
+            background: rgba(0, 180, 216, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .tourism-tag.active {
+            background: var(--accent);
+            color: var(--bg-dark);
+            border-color: var(--accent);
+            box-shadow: 0 4px 15px rgba(0, 180, 216, 0.3);
+        }
+
+        .score-breakdown {
+            display: grid;
+            grid-template-columns: auto auto auto;
+            gap: 1.5rem;
+            font-size: 0.9rem;
+            color: var(--text-dim);
+            margin-top: 1rem;
+        }
+
+        .score-item { 
+            display: flex; 
+            flex-direction: column;
+            padding: 0.75rem 1rem;
+            background: rgba(0, 180, 216, 0.05);
+            border-radius: 0.6rem;
+            border-left: 3px solid var(--accent);
+        }
+
+        .score-label { 
+            color: var(--text-dim); 
+            font-size: 0.75rem; 
+            text-transform: uppercase;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        ::-webkit-scrollbar { 
+            width: 10px; 
+        }
+
+        ::-webkit-scrollbar-track { 
+            background: var(--card-bg-light);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb { 
+            background: linear-gradient(180deg, var(--accent) 0%, var(--accent-secondary) 100%);
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 180, 216, 0.3);
+        }
+
+        ::-webkit-scrollbar-thumb:hover { 
+            background: var(--accent);
+        }
+
+        button {
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-secondary) 100%);
+            color: var(--bg-dark);
+            border: none;
+            padding: 0.7rem 1.5rem;
+            border-radius: 0.6rem;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(0, 180, 216, 0.3);
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 180, 216, 0.4);
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>✈️ Next Trip</h1>
+        <p class="desc">AI-powered route recommendations using Alternating Least Squares (ALS)</p>
+    </header>
+
+    <section class="selection-panel">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 1.5rem;">
+            <!-- Left: Airport Selection -->
+            <div>
+                <strong>🛫 Your Travel History</strong>
+                <div class="selection-badges" id="badge-container">
+                    <span style="color: var(--text-dim); font-size: 0.9rem;">Select airports to get personalized recommendations...</span>
+                </div>
+            </div>
+            
+            <!-- Right: Tourism Type Selection -->
+            <div>
+                <strong>🌴 Travel Interests</strong>
+                <div id="tourism-badges" class="selection-badges" style="flex-wrap: wrap;">
+                    <span style="color: var(--text-dim); font-size: 0.9rem;">Loading travel interests...</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="search-container">
+    <input type="text" class="search-input" id="search-input" placeholder="Find your next destination (e.g., Barcelona, LHR, Tokyo)...">
+    </div>
+
+    <div class="airport-grid" id="airport-grid">
+        </div>
+
+    <div class="results-section">
+        <div class="rec-card">
+            <h2>🎯 Recommended Destinations</h2>
+            <div id="results-list">
+                <p style="text-align: center; color: var(--text-dim); padding: 2rem;">Select airports to discover your next amazing trip!</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+        <!-- Map & Prices Modal -->
+        <div id="map-modal" style="display:none; position:fixed; inset:0; background: rgba(0,0,0,0.8); align-items:center; justify-content:center; z-index:9999; backdrop-filter: blur(5px);">
+            <div style="width:90%; max-width:1000px; background:var(--card-bg); border-radius:1.2rem; padding:2rem; border:1px solid var(--border); box-shadow: var(--shadow); animation: slideUp 0.4s ease-out;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
+                    <h3 style="margin:0; background: linear-gradient(135deg, var(--accent) 0%, var(--accent-secondary) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; font-size: 1.5rem;">Recommendation Map</h3>
+                    <button id="close-map" style="background: var(--danger); padding: 0.6rem 1.2rem;">Close</button>
+                </div>
+                <div id="map" style="height:500px; border-radius:0.9rem; overflow:hidden; border: 1px solid var(--border); box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);"></div>
+                <div id="route-list" style="margin-top:1rem; max-height:150px; overflow:auto; color:var(--text-main); border: 1px solid var(--border); border-radius: 0.6rem; padding: 1rem; background: var(--card-bg-light);"></div>
+            </div>
+        </div>
+
+        <style>
+            @keyframes slideUp {
+                from { opacity: 0; transform: translateY(30px); }
+                to { opacity: 1; transform: translateY(0); }
+            }
+        </style>
+
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-sA+e2w7YQG3q7n0qjLr2A6Hc0m8Oa1p2xv+0s5q6UIY=" crossorigin=""/>
+        <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-QVQxK2z3k8ZH4Q2v8sQ6Bq4Q5Qh6G0m1z2xv9q6ZSMc=" crossorigin=""></script>
+
+<script>
+    let allAirports = [];
+    let selectedIatas = [];
+    let selectedTourismTypes = [];
+    let availableTourismTypes = [];
+
+    async function init() {
+        try {
+            // Load airports
+            const response = await fetch('http://127.0.0.1:8000/airports');
+            allAirports = await response.json();
+            renderGrid(allAirports.slice(0, 60));
+
+            // Load tourism types
+            const tourismRes = await fetch('http://127.0.0.1:8000/tourism-types');
+            const tourismData = await tourismRes.json();
+            availableTourismTypes = tourismData.tourism_types;
+            renderTourismTags();
+        } catch (error) {
+            console.error("Error loading data:", error);
+            document.getElementById('airport-grid').innerHTML = "<p style='color:red'>Error: Unable to connect to the FastAPI server.</p>";
+        }
+    }
+
+    function renderTourismTags() {
+        const container = document.getElementById('tourism-badges');
+        container.innerHTML = '';
+        
+        availableTourismTypes.forEach(type => {
+            const tag = document.createElement('span');
+            tag.className = `tourism-tag ${selectedTourismTypes.includes(type) ? 'active' : ''}`;
+            tag.textContent = type.charAt(0).toUpperCase() + type.slice(1);
+            tag.onclick = () => toggleTourismType(type);
+            container.appendChild(tag);
+        });
+    }
+
+    function toggleTourismType(type) {
+        if (selectedTourismTypes.includes(type)) {
+            selectedTourismTypes = selectedTourismTypes.filter(t => t !== type);
+        } else {
+            selectedTourismTypes.push(type);
+        }
+        renderTourismTags();
+        getRecommendations();
+    }
+
+    function renderGrid(list) {
+        const grid = document.getElementById('airport-grid');
+        grid.innerHTML = '';
+
+        list.forEach(ap => {
+            const isActive = selectedIatas.includes(ap.iata);
+            const card = document.createElement('div');
+            card.className = `airport-card ${isActive ? 'active' : ''}`;
+            card.innerHTML = `
+                <span class="iata">${ap.iata}</span>
+                <span class="city">${ap.city}</span>
+            `;
+            card.onclick = () => toggleSelection(ap.iata);
+            grid.appendChild(card);
+        });
+    }
+
+    function toggleSelection(iata) {
+        if (selectedIatas.includes(iata)) {
+            selectedIatas = selectedIatas.filter(i => i !== iata);
+        } else {
+            selectedIatas.push(iata);
+        }
+        updateUI();
+        getRecommendations();
+    }
+
+    function updateUI() {
+        const container = document.getElementById('badge-container');
+        if (selectedIatas.length === 0) {
+            container.innerHTML = '<span style="color: var(--text-dim); font-size: 0.9rem;">Select airports from the catalog below...</span>';
+        } else {
+            container.innerHTML = selectedIatas.map(iata => `<span class="badge">${iata}</span>`).join('');
+        }
+
+        const searchTerm = document.getElementById('search-input').value.toUpperCase();
+        filterAirports(searchTerm);
+    }
+
+    document.getElementById('search-input').addEventListener('input', (e) => {
+        filterAirports(e.target.value.toUpperCase());
+    });
+
+    function filterAirports(term) {
+        const filtered = allAirports.filter(a => 
+            a.iata.includes(term) || a.city.toUpperCase().includes(term)
+        );
+        renderGrid(filtered.slice(0, 60));
+    }
+
+    async function getRecommendations() {
+        const resultsDiv = document.getElementById('results-list');
+        
+        if (selectedIatas.length === 0) {
+            resultsDiv.innerHTML = '<p style="text-align: center; color: var(--text-dim); padding: 2rem;">The ranking will update automatically when items are selected.</p>';
+            return;
+        }
+
+        try {
+            // Use the tourism-aware endpoint if tourism preferences are selected, otherwise use the basic endpoint
+            let response, data;
+            if (selectedTourismTypes.length > 0) {
+                response = await fetch('http://127.0.0.1:8000/recommend-with-tourism', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        airports: selectedIatas,
+                        tourism_preferences: selectedTourismTypes
+                    })
+                });
+            } else {
+                response = await fetch('http://127.0.0.1:8000/recommend', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ airports: selectedIatas })
+                });
+            }
+            
+            data = await response.json();
+            renderRecommendations(data.recommendations);
+        } catch (error) {
+            resultsDiv.innerHTML = '<p style="color: #ef4444;">Error calculating recommendations.</p>';
+            console.error("Error:", error);
+        }
+    }
+
+    function renderRecommendations(recs) {
+        const resultsDiv = document.getElementById('results-list');
+        if (!recs || recs.length === 0) {
+            resultsDiv.innerHTML = '<p>No recommendations found.</p>';
+            return;
+        }
+
+        resultsDiv.innerHTML = recs.map((r, index) => {
+            // Check if this is a tourism-enhanced recommendation
+            const hasTourismInfo = r.wmf_score !== undefined;
+            
+            let scoreDisplay = '';
+            if (hasTourismInfo) {
+                scoreDisplay = `
+                    <div class="score-breakdown">
+                        <div class="score-item">
+                            <span class="score-label">WMF Score</span>
+                            <span class="rec-score">${r.wmf_score.toFixed(4)}</span>
+                        </div>
+                        <div class="score-item">
+                            <span class="score-label">Jaccard</span>
+                            <span class="rec-score" style="color: #f97316;">${r.jaccard_score.toFixed(4)}</span>
+                        </div>
+                        <div class="score-item">
+                            <span class="score-label">Final</span>
+                            <span class="rec-score" style="color: #06b6d4;">${r.final_score.toFixed(4)}</span>
+                        </div>
+                    </div>
+                    <div style="margin-top: 0.75rem; font-size: 0.8rem; color: var(--text-dim);">
+                        Tourism: ${r.tourism_types && r.tourism_types.length > 0 ? r.tourism_types.map(t => t.charAt(0).toUpperCase() + t.slice(1)).join(', ') : 'None'}
+                    </div>
+                `;
+            } else {
+                scoreDisplay = `<div class="rec-score">${r.score.toFixed(4)}</div>`;
+            }
+
+            return `
+                <div class="rec-item">
+                    <div class="rec-info">
+                        <span class="rec-rank">#${index + 1}</span>
+                        <div>
+                            <div style="font-weight: bold; font-size: 1.2rem;">${r.iata} — ${r.city}</div>
+                            <div style="font-size: 0.8rem; color: var(--text-dim);">Recommended airport</div>
+                        </div>
+                    </div>
+                    ${scoreDisplay}
+                </div>
+            `;
+        }).join('');
+    }
+
+    // ------- Map & Prices interaction -------
+    let map, routeLayer;
+
+    document.getElementById('close-map').addEventListener('click', () => {
+        document.getElementById('map-modal').style.display = 'none';
+        if (map) { map.remove(); map = null; }
+    });
+
+    function showMapWithRoutes(routes) {
+        const container = document.getElementById('route-list');
+        container.innerHTML = '';
+
+        if (!routes || routes.length === 0) {
+            container.innerHTML = '<p style="color:var(--text-dim);">No route estimates available for the current selection.</p>';
+            return;
+        }
+
+        // Build quick lookup of city names from allAirports
+        const cityByIata = {};
+        allAirports.forEach(a => { cityByIata[a.iata] = a.city || a.iata; });
+
+        // Initialize map if not already
+        if (!map) {
+            map = L.map('map').setView([20,0], 2);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {maxZoom: 18}).addTo(map);
+        }
+
+        if (routeLayer) { routeLayer.clearLayers(); } else { routeLayer = L.layerGroup().addTo(map); }
+
+        const bounds = [];
+
+        // 1) Draw user footprint (liked airports)
+        const validLiked = selectedIatas.filter(i => {
+            const route = routes.find(rr => rr.origin === i || rr.destination === i);
+            return Boolean(route && (route.origin_coord || route.dest_coord));
+        });
+
+        validLiked.forEach(iata => {
+            const route = routes.find(rr => rr.origin === iata) || routes.find(rr => rr.destination === iata);
+            const coord = route ? (route.origin === iata ? route.origin_coord : route.dest_coord) : null;
+            if (coord) {
+                bounds.push(coord);
+                const marker = L.marker(coord, {title: iata});
+                marker.bindPopup(`<strong>Profile</strong><br/>${iata} — ${cityByIata[iata] || ''}`);
+                routeLayer.addLayer(marker);
+            }
+        });
+
+        routes.forEach((r, idx) => {
+            const o = r.origin; const d = r.destination;
+            const oc = r.origin_coord; const dc = r.dest_coord;
+            const score = r.score;
+
+            const row = document.createElement('div'); row.className = 'route-row';
+            row.style.padding='0.5rem'; row.style.borderBottom='1px solid var(--border)';
+            row.innerHTML = `<strong>#${idx+1}</strong> ${d} — ${cityByIata[d] || ''} — Score: ${score.toFixed(3)}`;
+            container.appendChild(row);
+
+            if (oc) bounds.push(oc);
+            if (dc) bounds.push(dc);
+
+            if (dc) {
+                const marker = L.circleMarker(dc, {radius:7, color:'#10b981', fillColor:'#10b981', fillOpacity:0.9});
+                marker.bindPopup(`<strong>Recommendation #${idx+1}</strong><br/>${d} — ${cityByIata[d] || ''}<br/>Score: ${score.toFixed(3)}`);
+                routeLayer.addLayer(marker);
+            }
+
+            if (oc && dc) {
+                const poly = L.polyline([oc, dc], {color: '#f97316', weight: 2, opacity: 0.8});
+                routeLayer.addLayer(poly);
+            }
+        });
+
+        if (bounds.length) {
+            map.fitBounds(bounds, {padding:[40,40]});
+        }
+    }
+
+    init();
+</script>
+</body>
+</html>
