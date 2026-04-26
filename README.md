@@ -87,7 +87,7 @@ Where:
 
 The final recommendation score combines both signals through a weighted linear combination:
 
-$$\text{Score}_{final} = \omega \cdot \text{normalize}(\text{WMF\_score}) + (1-\omega) \cdot J(A, B)$$
+$$\text{Scorefinal} = \omega \cdot \text{normalize}(\text{WMF\_score}) + (1-\omega) \cdot J(A, B)$$
 
 Where:
 - $\omega = 0.6$ weights the WMF-based collaborative signal (60%)
