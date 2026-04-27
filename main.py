@@ -128,7 +128,7 @@ def jaccard_similarity(set_a: set, set_b: set) -> float:
 # ==================== LOAD MODEL AND METADATA ====================
 
 # Load the serialized WMF model and the airport index mappings
-#this model was trained on the full dataset with 100 factors, 0.1 regularization, 15 iterations and alpha=15, and was
+#this model was trained on the full dataset with 50factors, 0.1 regularization, 15 iterations and alpha=15, and was
 #trained in the notebook ./model/recommendation_model_training.ipynb 
 with open('./model/wmf_model.npz', 'rb') as f:
     wmf_model = pickle.load(f)
