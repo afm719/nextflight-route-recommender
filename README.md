@@ -3,11 +3,12 @@
 A flight route recommendation system leveraging **Weighted Matrix Factorization (WMF)** with collaborative filtering and semantic similarity matching. This project combines latent factor models with tourism preference analysis to deliver personalized airport recommendations based on user travel history.
 
 **How to use it**: 
-1. Activate the project virtual environment, install dependencies, and ensure data/model files are in place:
-   ```bash
-   source info/bin/activate && pip install -r requirements.txt.
-   ```
-3. Start the backend and open the frontend: ```uvicorn main:app  --host 127.0.0.1 --port 8000 --reload``` then open ```index.html``` in your browser
+
+1. If you have WINDOWS SYSTEM:
+  ```double click in RUN_PROJECT_windows.bat```
+
+2. If you have MAC/LINUX:
+  ``` bash RUN_PROJECT_MAC_LINUX.sh```
 
 
 ## Project Overview
