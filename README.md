@@ -40,7 +40,7 @@ $$\mathbf{R} \approx \mathbf{U} \mathbf{V}^T$$
 Where:
 - $\mathbf{U} \in \mathbb{R}^{m \times k}$ is the user latent factor matrix
 - $\mathbf{V} \in \mathbb{R}^{n \times k}$ is the item (airport) latent factor matrix
-- $k$ is the number of latent factors (set to 100 in this implementation)
+- $k$ is the number of latent factors (set to 50 in this implementation)
 
 #### Confidence-Weighted Loss Function
 
