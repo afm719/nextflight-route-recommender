@@ -4,11 +4,7 @@ A flight route recommendation system leveraging **Weighted Matrix Factorization 
 
 **How to use it**: 
 
-1. If you have WINDOWS SYSTEM:
-  ```double click in RUN_PROJECT_windows.bat```
-
-2. If you have MAC/LINUX:
-  ``` bash RUN_PROJECT_MAC_LINUX.sh```
+ Open a terminal and execute after clone the repo: ``` bash RUN_PROJECT_MAC_LINUX.sh```
 
 
 ## Project Overview
