@@ -8,7 +8,7 @@ echo =========================================================
 echo.
 
 python --version >nul 2>&1
-if %errorlevel% neq 0 (
+if errorlevel 1 (
     echo [ERROR] Python is not installed on this system.
     echo Please install Python from https://www.python.org/
     pause
@@ -16,12 +16,12 @@ if %errorlevel% neq 0 (
 )
 
 if not exist "info" (
-    echo [1/3] Creating virtual environment (info)...
+    echo [1/3] Creating virtual environment 'info'...
     python -m venv info
 )
 
 echo [2/3] Activating environment and installing dependencies...
-echo       (This might take a while the first time)
+echo       This might take a while the first time...
 call info\Scripts\activate
 pip install --upgrade pip -q
 pip install -r requirements.txt -q
@@ -30,10 +30,12 @@ echo [3/3] Starting the AI server...
 echo.
 echo =========================================================
 echo  THE PROJECT WILL OPEN IN YOUR BROWSER SHORTLY...
-echo  (If it doesn't, go to: http://127.0.0.1:8000)
+echo  If it doesn't, go to: http://127.0.0.1:8000
 echo =========================================================
 echo.
 
+:: Wait 2 seconds then open the browser
+timeout /t 2 /nobreak >nul
 start "" "http://127.0.0.1:8000"
 
 uvicorn main:app --host 127.0.0.1 --port 8000 --log-level info
