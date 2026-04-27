@@ -7,7 +7,7 @@ import numpy as np
 import scipy.sparse as sparse
 import csv
 import os
-from collections import defaultdict
+from fastapi.responses import FileResponse
 
 
 class CustomWMF:
@@ -188,7 +188,10 @@ else:
 
 
 app = FastAPI()
-
+@app.get("/")
+async def serve_frontend():
+    """Sirve la interfaz gráfica (index.html) en la ruta principal"""
+    return FileResponse("index.html")
 # Allow cross-origin requests from any origin for the simple web demo.
 app.add_middleware(
     CORSMiddleware,
