@@ -87,13 +87,15 @@ Where:
 
 The final recommendation score combines both signals through a weighted linear combination:
 
-$$\text{Scorefinal} = \omega \cdot \text{normalize}(\text{WMF\_score}) + (1-\omega) \cdot J(A, B)$$
+$$\text{Score}_{\text{final}} = \omega \cdot \text{normalize}(\text{WMF}_{\text{score}}) + (1-\omega) \cdot J(A, B)$$
 
 Where:
 - $\omega = 0.6$ weights the WMF-based collaborative signal (60%)
 - $(1-\omega) = 0.4$ weights the tourism similarity signal (40%)
 - The WMF score is normalized to the $[0, 1]$ range to ensure fair blending:
-  $$\text{normalize}(\text{WMF\_score}) = \min\left(1.0, \frac{\text{WMF\_score}}{\text{WMF\_score} + \epsilon}\right)$$
+
+$$\text{normalize}(\text{WMF}_{\text{score}}) = \min\left(1.0, \frac{\text{WMF}_{\text{score}}}{\text{WMF}_{\text{score}} + \epsilon}\right)$$
+
 
 This hybrid approach balances discovered patterns from user behavior with explicit preference signals.
 
@@ -154,3 +156,7 @@ nextflight-route-recommender/
 - Horizontal scaling: Deploy multiple server instances
 - Database integration: Replace in-memory models with distributed backends
 - Batch processing: Asynchronous recommendation computation
+
+## Sources
+- Dataset: https://github.com/jpatokal/openflights
+- Slides from the course
