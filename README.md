@@ -69,7 +69,8 @@ This yields a system of $k$ linear equations that can be solved efficiently usin
 
 For generating recommendations for a new user (a composite profile built from selected airports), we apply the folding-in technique. Given a set of liked item indices $S$, the new user latent vector $\mathbf{u}_{new}$ is computed as:
 
-$$\mathbf{u}_{new} = (\mathbf{V}_S^T \mathbf{C} \mathbf{V}_S + \lambda \mathbf{I})^{-1} \mathbf{V}_S^T \mathbf{C}(\mathbf{1} + 1)$$
+
+$$\mathbf{u}_{new} = (\mathbf{V}^T \mathbf{V} + \mathbf{V}_S^T \mathbf{C}_\alpha \mathbf{V}_S + \lambda \mathbf{I})^{-1} \mathbf{V}_S^T (\mathbf{c}_\alpha + \mathbf{1})$$
 
 Where:
 - $\mathbf{V}_S$ represents the factor matrices of the selected airports
