@@ -3,8 +3,9 @@
 A flight route recommendation system leveraging **Weighted Matrix Factorization (WMF)** with collaborative filtering and semantic similarity matching. This project combines latent factor models with tourism preference analysis to deliver personalized airport recommendations based on user travel history.
 
 **How to use it**: 
-
- Open a terminal and execute after clone the repo: ``` bash RUN_PROJECT_MAC_LINUX.sh```
+ 1. ``` git clone https://github.com/afm719/nextflight-route-recommender ```
+ 2. ``` sudo apt-get install python3-dev ```  (because the code has some C/C++ dependencies)
+ 3. ``` bash RUN_PROJECT_MAC_LINUX.sh```
 
 
 ## Project Overview
